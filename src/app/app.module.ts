@@ -1,26 +1,71 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, NgModule } from '@angular/core';
-import { BrowserModule, BrowserTransferStateModule, makeStateKey, TransferState } from '@angular/platform-browser';
-import { NavigationEnd, Router, RouterModule, UrlSerializer } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import {
+    FacebookLoginProvider,
+    GoogleLoginProvider,
+    SocialAuthServiceConfig,
+    SocialLoginModule,
+} from "@abacritt/angularx-social-login";
+import { DOCUMENT } from "@angular/common";
+import { Inject, NgModule } from "@angular/core";
+import {
+    BrowserModule,
+    BrowserTransferStateModule,
+    makeStateKey,
+    TransferState,
+} from "@angular/platform-browser";
+import {
+    NavigationEnd,
+    Router,
+    RouterModule,
+    UrlSerializer,
+} from "@angular/router";
+import { filter } from "rxjs/operators";
 
-import { AppComponent } from './app.component';
-import { routes } from './app.routes';
-import { HomePageComponent } from './core/components/home-page/home-page.component';
-import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
+import { AppComponent } from "./app.component";
+import { routes } from "./app.routes";
+import { HomePageComponent } from "./core/components/home-page/home-page.component";
+import { CoreModule } from "./core/core.module";
+import { SharedModule } from "./shared/shared.module";
+const STATE_KEY = makeStateKey<any>("apollo.state");
 
-const STATE_KEY = makeStateKey<any>('apollo.state');
+// const config = new SocialAuthServiceConfig([
+
+// ]);
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        HomePageComponent,
+    providers: [
+        {
+            provide: "SocialAuthServiceConfig",
+            useValue: {
+                autoLogin: false,
+                providers: [
+                    {
+                        id: GoogleLoginProvider.PROVIDER_ID,
+                        provider: new GoogleLoginProvider(
+                            "234511615630-qkoogsitmrsumud0kfmaftlc7rlaf0dq.apps.googleusercontent.com"
+                        ),
+                    },
+                    {
+                        id: FacebookLoginProvider.PROVIDER_ID,
+                        provider: new FacebookLoginProvider(
+                            "fb1937818469896978"
+                        ),
+                    },
+                ],
+                onError: (err) => {
+                    console.error(err);
+                },
+            } as SocialAuthServiceConfig,
+        },
     ],
+    declarations: [AppComponent, HomePageComponent],
     imports: [
-        BrowserModule.withServerTransition({appId: 'serverApp'}),
+        SocialLoginModule,
+        BrowserModule.withServerTransition({ appId: "serverApp" }),
         BrowserTransferStateModule,
-        RouterModule.forRoot(routes, { scrollPositionRestoration: 'disabled', initialNavigation: 'enabledBlocking' }),
+        RouterModule.forRoot(routes, {
+            scrollPositionRestoration: "disabled",
+            initialNavigation: "enabledBlocking",
+        }),
         CoreModule,
         SharedModule,
         // Using the service worker appears to break SSR after the initial page load.
@@ -32,13 +77,12 @@ const STATE_KEY = makeStateKey<any>('apollo.state');
     bootstrap: [AppComponent],
 })
 export class AppModule {
-
     constructor(
         private coreModule: CoreModule,
         private readonly transferState: TransferState,
         private router: Router,
         private urlSerializer: UrlSerializer,
-        @Inject(DOCUMENT) private document?: Document,
+        @Inject(DOCUMENT) private document?: Document
     ) {
         const isBrowser = this.transferState.hasKey<any>(STATE_KEY);
 
@@ -71,21 +115,24 @@ export class AppModule {
      * routes change.
      */
     private handleScrollOnNavigations() {
-        this.router.events.pipe(
-            filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        ).subscribe(event => {
-            if (this.document?.defaultView) {
-                const parsed = this.urlSerializer.parse(event.urlAfterRedirects);
-                const primaryRoot = parsed.root.children.primary;
-                const isFacetFilterNavigation = (primaryRoot?.segments[0]?.path === 'category' &&
-                    primaryRoot?.segments[1]?.parameterMap.has('facets'));
+        this.router.events
+            .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+            .subscribe((event) => {
+                if (this.document?.defaultView) {
+                    const parsed = this.urlSerializer.parse(
+                        event.urlAfterRedirects
+                    );
+                    const primaryRoot = parsed.root.children.primary;
+                    const isFacetFilterNavigation =
+                        primaryRoot?.segments[0]?.path === "category" &&
+                        primaryRoot?.segments[1]?.parameterMap.has("facets");
 
-                if (!isFacetFilterNavigation) {
-                    this.document.defaultView.scrollTo({
-                        top: 0,
-                    });
+                    if (!isFacetFilterNavigation) {
+                        this.document.defaultView.scrollTo({
+                            top: 0,
+                        });
+                    }
                 }
-            }
-        });
+            });
     }
 }

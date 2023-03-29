@@ -1,42 +1,134 @@
-<form #signInForm="ngForm"
-      class="space-y-6"
-      (submit)="signIn()">
-    <div>
-        <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-        <div class="mt-1">
-            <input [(ngModel)]="emailAddress" id="email" name="email" type="email" autocomplete="email" required
-                   class="input-text">
-        </div>
-    </div>
+<form #signInForm="ngForm" class="space-y-6">
+    <div class="container_login">
+        <div class="left_signin">
+            <div class="content_signin_left">
+                <button
+                    class="btn btn-social-icon btn-facebook"
+                    (click)="signInWithFB()"
+                >
+                    <span class="fa fa-facebook"></span>click
+                </button>
+                <!-- <asl-google-signin-button type="standard" size="large"> -->
+                <!-- </asl-google-signin-button> -->
+                <div class="contentHeader">
+                    <h2>Đăng nhập</h2>
+                    <p>
+                        Đăng nhập để mua hàng và sử dụng những tiện ích mới nhất
+                        từ www.ecstie.com
+                    </p>
+                </div>
 
-    <div>
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <div class="mt-1">
-            <input [(ngModel)]="password" id="password" name="password" type="password"
-                   autocomplete="current-password" required
-                   class="input-text">
+                <div>
+                    <div class="loginOther">
+                        <img
+                            class="icon_login"
+                            src="../../../../assets/icons/facebook.svg"
+                            alt=""
+                        />
+                        <div class="font_icon_login">
+                            Đăng nhập bằng Facebook
+                        </div>
+                    </div>
+                    <div class="loginOther">
+                        <img
+                            class="icon_login"
+                            src="../../../../assets/icons/google.svg"
+                            alt=""
+                        />
+                        <div class="font_icon_login">Đăng nhập bằng Google</div>
+                    </div>
+                    <!-- <div class="loginOther">
+                        <img
+                            class="icon_login"
+                            src="../../../../assets/icons/apple.svg"
+                            alt=""
+                        />
+                        <div class="font_icon_login">Đăng nhập bằng Apple</div>
+                    </div> -->
+                </div>
+                <div class="font_footer">
+                    <p class="font_has_account">Đã có tài khoản?</p>
+                    <a href="">Đăng nhập</a>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="flex items-center justify-between">
-        <div class="flex items-center">
-            <input id="remember-me" name="remember-me" type="checkbox"
-                   [(ngModel)]="rememberMe"
-                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
-            <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
-        </div>
-
-        <div class="text-sm">
-            <a [routerLink]="['/account/forgotten-password', { email: this.emailAddress ?? '' }]"
-               class="font-medium text-primary-600 hover:text-primary-500">Forgot your password?</a>
-        </div>
-    </div>
-        <button type="submit"
+        <div class="right_signin">
+            <div class="content_signin_left">
+                <div class="mt-1">
+                    <input
+                        placeholder="Email"
+                        [(ngModel)]="emailAddress"
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        required
+                        class="contentHeader_right"
+                    />
+                </div>
+            </div>
+            <div class="content_signin_left">
+                <div class="mt-1">
+                    <input
+                        placeholder="Mật khẩu"
+                        [(ngModel)]="password"
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                        class="contentHeader_right"
+                    />
+                </div>
+            </div>
+            <button
+                type="submit"
                 [disabled]="signInForm.invalid || signInForm.pristine"
-                class="w-full btn-primary">
-            Sign in
-        </button>
-    <div *ngIf="displayRegisterLink" class="text-sm font-medium text-primary-600 hover:text-primary-500 mx-auto">
-        <a [routerLink]="['/account/register']">No account? Register here</a>
+                class="button_signin"
+            >
+                Sign in
+            </button>
+            <div class="text-sm">
+                <a
+                    [routerLink]="[
+                        '/account/forgotten-password',
+                        { email: this.emailAddress ?? '' }
+                    ]"
+                    class="forgot_password"
+                    >Quên mật khẩu?</a
+                >
+            </div>
+        </div>
     </div>
+    <!-- <div style="float: left">
+
+
+        
+
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    [(ngModel)]="rememberMe"
+                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <label
+                    for="remember-me"
+                    class="ml-2 block text-sm text-gray-900"
+                    >Remember me</label
+                >
+            </div>
+
+            <div class="text-sm">
+                <a
+                    [routerLink]="['/account/forgotten-password', { email: this.emailAddress ?? '' }]"
+                    class="font-medium text-primary-600 hover:text-primary-500"
+                    >Forgot your password?</a
+                >
+            </div>
+        </div>
+
+    </div> -->
 </form>
